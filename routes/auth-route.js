@@ -1,39 +1,24 @@
-const express = require("express");
-const {
-  login,
-  register,
-  logout,
-  requestPasswordReset,
-} = require("../controllers/auth-controller");
-const { loginLimiter } = require("../middleware/rateLimiter");
-const {
+// const express = require("express");
+import express from "express";
+import passport from "passport";
+
+// const router = express.Router();
+import { login, register, logout } from "../controllers/auth-controller.js";
+// const { loginLimiter } = securityMiddleware(app);
+import {
   validateLoginInput,
   validateEmailInput,
   validateRegistrationInput,
-} = require("../middleware/validator");
-const passport = require("passport");
-const { authenticateJWT } = require("../middleware/auth");
+} from "../middleware/validator.js";
+import { authenticateJWT } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Local Authentication Routes
-router.post("/login", loginLimiter, validateLoginInput, login);
+// router.post("/login", loginLimiter, validateLoginInput, login);
+router.post("/login", validateLoginInput, login);
 router.post("/register", validateRegistrationInput, register);
 router.post("/logout", authenticateJWT, logout);
-
-// Password Management
-router.post("/forgot-password", validateEmailInput, requestPasswordReset);
-router.post("/reset-password/:token", validatePasswordInput, resetPassword);
-router.post(
-  "/change-password",
-  authenticateJWT,
-  validatePasswordInput,
-  changePassword
-);
-
-// Token Management
-router.post("/refresh-token", refreshAccessToken);
-router.post("/revoke-token", authenticateJWT, revokeRefreshToken);
 
 // OAuth Routes
 router.get(
@@ -44,24 +29,4 @@ router.get(
   })
 );
 
-router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    session: false,
-  }),
-  handleOAuthSuccess
-);
-
-// User Management
-router.get("/me", authenticateJWT, getCurrentUser);
-router.post("/mfa/enable", authenticateJWT, enableMFA);
-router.post("/mfa/verify", authenticateJWT, verifyMFA);
-router.post("/mfa/disable", authenticateJWT, disableMFA);
-
-// Session Management
-router.get("/sessions", authenticateJWT, getActiveSessions);
-router.delete("/sessions/:sessionId", authenticateJWT, terminateSession);
-router.delete("/sessions", authenticateJWT, terminateAllSessions);
-
-module.exports = router;
+export default router;

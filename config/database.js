@@ -1,11 +1,9 @@
-const mongoose = require("mongoose");
-const logger = require("../utils/logger");
+import mongoose from "mongoose";
+import { logger } from "../utils/logger.js";
 
 const connectDatabase = async () => {
   try {
     const connection = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       autoIndex: true, // Build indexes
       serverSelectionTimeoutMS: 5000, // Timeout after 5s
       socketTimeoutMS: 45000, // Close sockets after 45s
@@ -34,4 +32,4 @@ const connectDatabase = async () => {
   }
 };
 
-module.exports = connectDatabase;
+export default connectDatabase;

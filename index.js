@@ -1,14 +1,29 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const connectDatabase = require("./config/database");
-const logger = require("./utils/logger");
-const authRoutes = require("./routes/auth-route.js");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+
+// const session = require("express-session");
+import connectDatabase from "./config/database.js";
+import authRoutes from "./routes/auth-route.js";
+import { logger } from "./utils/logger.js";
+import { securityMiddleware } from "./middleware/rateLimiter.js";
+
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // Middleware setup
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS,
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   session({
@@ -27,7 +42,7 @@ app.use(
 const { loginLimiter } = securityMiddleware(app);
 
 // Routes
-app.use("/auth", loginLimiter, authRoutes);
+app.use("/api/v1/auth", loginLimiter, authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -42,9 +57,9 @@ const startServer = async () => {
     await connectDatabase();
 
     // Start server
-    app.listen(process.env.PORT, () => {
+    app.listen(PORT, () => {
       logger.info(
-        `Server running in ${process.env.NODE_ENV} mode on port ${process.env.PORT}`
+        `Server running in ${process.env.NODE_ENV.toUpperCase()} mode on port ${PORT}`
       );
     });
   } catch (error) {

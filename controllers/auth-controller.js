@@ -1,18 +1,17 @@
-const crypto = require("crypto");
-const { sendResetEmail } = require("../utils/email");
-const jwt = require("jsonwebtoken");
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
-const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
+// const generateTokens = (userId) => {
+//   const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+//     expiresIn: "15m",
+//   });
 
-  const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
+//   const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
+//     expiresIn: "7d",
+//   });
 
-  return { accessToken, refreshToken };
-};
+//   return { accessToken, refreshToken };
+// };
 
 const register = async (req, res) => {
   try {
@@ -117,36 +116,36 @@ const logout = async (req, res) => {
   }
 };
 
-const requestPasswordReset = async (req, res) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+// const requestPasswordReset = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(200).json({
-        message: "If an account exists, you will receive a reset email.",
-      });
-    }
+//     if (!user) {
+//       return res.status(200).json({
+//         message: "If an account exists, you will receive a reset email.",
+//       });
+//     }
 
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+//     const resetToken = crypto.randomBytes(32).toString("hex");
+//     const hashedToken = crypto
+//       .createHash("sha256")
+//       .update(resetToken)
+//       .digest("hex");
 
-    user.passwordResetToken = hashedToken;
-    user.passwordResetExpires = Date.now() + 3600000; // 1 hour
-    await user.save();
+//     user.passwordResetToken = hashedToken;
+//     user.passwordResetExpires = Date.now() + 3600000; // 1 hour
+//     await user.save();
 
-    await sendResetEmail(user.email, resetToken);
+//     await sendResetEmail(user.email, resetToken);
 
-    res.status(200).json({
-      message: "If an account exists, you will receive a reset email.",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Password reset request failed" });
-  }
-};
+//     res.status(200).json({
+//       message: "If an account exists, you will receive a reset email.",
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: "Password reset request failed" });
+//   }
+// };
 
 const refreshAccessToken = async (req, res) => {
   try {
@@ -234,11 +233,11 @@ const handleOAuthSuccess = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   register,
   login,
   logout,
-  requestPasswordReset,
+  // requestPasswordReset,
   refreshAccessToken,
   handleOAuthSuccess,
 };

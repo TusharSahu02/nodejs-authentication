@@ -1,34 +1,7 @@
+import jwt from "jsonwebtoken";
+import { User } from "../models/user.js";
 
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-// const rateLimit = require("express-rate-limit");
-// const helmet = require("helmet");
-
-// const securityMiddleware = (app) => {
-//   // Rate limiting
-//   const loginLimiter = rateLimit({
-//     windowMs: 15 * 60 * 1000, // 15 minutes
-//     max: 5, // 5 attempts
-//     message: "Too many login attempts, please try again later",
-//   });
-
-//   // Security headers
-//   app.use(helmet());
-//   app.use(helmet.contentSecurityPolicy());
-//   app.use(helmet.crossOriginEmbedderPolicy());
-
-//   // CORS configuration
-//   app.use((req, res, next) => {
-//     res.header("Access-Control-Allow-Origin", process.env.ALLOWED_ORIGINS);
-//     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-//     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-//     next();
-//   });
-
-//   return { loginLimiter };
-// };
-
-const authenticateJWT = async (req, res, next) => {
+export const authenticateJWT = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -50,5 +23,3 @@ const authenticateJWT = async (req, res, next) => {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
-
-module.exports = { authenticateJWT };

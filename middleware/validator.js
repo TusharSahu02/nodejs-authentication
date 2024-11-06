@@ -54,8 +54,4 @@ const validateEmailInput = (req, res, next) => {
   next();
 };
 
-module.exports = {
-  validateLoginInput,
-  validateRegistrationInput,
-  validateEmailInput,
-};
+export { validateLoginInput, validateRegistrationInput, validateEmailInput };
