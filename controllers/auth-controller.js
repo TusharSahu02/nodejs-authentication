@@ -1,17 +1,19 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import { User } from "../models/user.js";
 
-// const generateTokens = (userId) => {
-//   const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-//     expiresIn: "15m",
-//   });
+const generateTokens = (userId) => {
+  const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "15m",
+  });
 
-//   const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
-//     expiresIn: "7d",
-//   });
+  const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d",
+  });
 
-//   return { accessToken, refreshToken };
-// };
+  return { accessToken, refreshToken };
+};
 
 const register = async (req, res) => {
   try {
@@ -62,7 +64,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !bcrypt.compare(password, user.password)) {
       await handleFailedLogin(user);
       return res.status(401).json({ message: "Invalid credentials" });
     }
