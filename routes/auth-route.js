@@ -1,12 +1,10 @@
 import express from "express";
 import passport from "passport";
+import "../config/passport.js";
 
-// const router = express.Router();
 import { login, register, logout } from "../controllers/auth-controller.js";
-// const { loginLimiter } = securityMiddleware(app);
 import {
   validateLoginInput,
-  validateEmailInput,
   validateRegistrationInput,
 } from "../middleware/validator.js";
 import { authenticateJWT } from "../middleware/auth.js";
@@ -24,6 +22,16 @@ router.get(
     scope: ["profile", "email"],
     session: false,
   })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    res.redirect("/"); // Redirect to homepage after successful authentication
+  }
 );
 
 export default router;

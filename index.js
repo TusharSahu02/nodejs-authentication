@@ -5,13 +5,14 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { uncaughtExceptionHandler } from "./utils/uncaughtExceptionHandler.js";
 import { unhandledRejectionHandler } from "./utils/unhandledRejectionHandler.js";
 import morgan from "morgan";
+import config from "./utils/config.js";
 
 dotenv.config();
 
 const app = express();
 
 // Load environment variables
-const PORT = process.env.PORT || 5000;
+const PORT = config.PORT || 5000;
 
 // API logs middleware
 app.use(morgan("dev"));

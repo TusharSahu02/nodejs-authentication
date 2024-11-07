@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { logger } from "../utils/logger.js";
-
+import config from "../utils/config.js";
 const connectDatabase = async () => {
   try {
-    const connection = await mongoose.connect(process.env.MONGODB_URI, {
+    const connection = await mongoose.connect(config.MONGODB_URI, {
       autoIndex: true, // Build indexes
       serverSelectionTimeoutMS: 5000, // Timeout after 5s
       socketTimeoutMS: 45000, // Close sockets after 45s

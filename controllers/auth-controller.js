@@ -1,19 +1,7 @@
-import crypto from "crypto";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.js";
-
-const generateTokens = (userId) => {
-  const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
-
-  const refreshToken = jwt.sign({ userId }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
-
-  return { accessToken, refreshToken };
-};
+import { generateTokens } from "../service/token.service.js";
+import config from "../utils/config.js";
 
 const register = async (req, res) => {
   try {
@@ -45,7 +33,7 @@ const register = async (req, res) => {
     // Set refresh token cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -88,7 +76,7 @@ const login = async (req, res) => {
     // Set secure cookie with refresh token
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
@@ -158,7 +146,7 @@ const refreshAccessToken = async (req, res) => {
     }
 
     // Verify refresh token
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET);
 
     // Find user and check if refresh token exists
     const user = await User.findOne({
@@ -190,7 +178,7 @@ const refreshAccessToken = async (req, res) => {
     // Set new refresh token cookie
     res.cookie("refreshToken", tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -221,17 +209,15 @@ const handleOAuthSuccess = async (req, res) => {
     // Set refresh token cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: config.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     // Redirect to frontend with access token
-    res.redirect(
-      `${process.env.FRONTEND_URL}/oauth-success?token=${accessToken}`
-    );
+    res.redirect(`${config.FRONTEND_URL}/oauth-success?token=${accessToken}`);
   } catch (error) {
-    res.redirect(`${process.env.FRONTEND_URL}/login?error=oauth_failed`);
+    res.redirect(`${config.FRONTEND_URL}/login?error=oauth_failed`);
   }
 };
 

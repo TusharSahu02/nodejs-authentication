@@ -7,12 +7,14 @@ import authRoutes from "./routes/auth-route.js";
 import { securityMiddleware } from "./middleware/rateLimiter.js";
 import { AUTH_ROUTE_PREFIX } from "./utils/api_endpoints.js";
 import { logger } from "./utils/logger.js";
+import config from "./utils/config.js";
+import passport from "passport";
 
 const createServer = (app, port) => {
   // Middleware setup
   app.use(
     cors({
-      origin: process.env.ALLOWED_ORIGINS,
+      origin: config.ALLOWED_ORIGINS,
       credentials: true,
     })
   );
@@ -21,16 +23,19 @@ const createServer = (app, port) => {
   app.use(cookieParser());
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: config.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: process.env.NODE_ENV === "production",
+        secure: config.NODE_ENV === "production",
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
       },
     })
   );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   // Initialize security middleware
   const { loginLimiter } = securityMiddleware(app);
@@ -47,7 +52,7 @@ const createServer = (app, port) => {
       // Start server
       app.listen(port, () => {
         logger.info(
-          `Server running in ${process.env.NODE_ENV.toUpperCase()} mode on port ${port}`
+          `Server running in ${config.NODE_ENV.toUpperCase()} mode on port ${port}`
         );
       });
     } catch (error) {
