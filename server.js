@@ -1,3 +1,4 @@
+import fs from "fs";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -9,6 +10,8 @@ import { AUTH_ROUTE_PREFIX } from "./utils/api_endpoints.js";
 import { logger } from "./utils/logger.js";
 import config from "./utils/config.js";
 import passport from "passport";
+import swaggerUI from "swagger-ui-express";
+import swaggerDocument from "./utils/swagger.json" assert { type: "json" };
 
 const createServer = (app, port) => {
   // Middleware setup
@@ -42,6 +45,8 @@ const createServer = (app, port) => {
 
   // Routes
   app.use(AUTH_ROUTE_PREFIX, loginLimiter, authRoutes);
+
+  app.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
   // Start server
   const startServer = async () => {

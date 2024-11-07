@@ -1,0 +1,38 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NodeJS Authentication",
+    "description": "NodeJS Authentication API",
+
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "summary": "Login",
+        "description": "User login endpoint",
+        "responses": {
+          "200": {
+            "description": "Successful login"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "summary": "Register",
+        "description": "User registration endpoint",
+        "responses": {
+          "201": {
+            "description": "New user registered successfully"
+          }
+        }
+      }
+    }
+  }
+}

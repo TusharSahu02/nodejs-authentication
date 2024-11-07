@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 
+// require('dotenv-safe').load();  -> for production
+
 dotenv.config();
 
 export default {
